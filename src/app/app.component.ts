@@ -15,7 +15,7 @@ import { CellComponent } from './cell/cell.component';
 
 
 export class AppComponent implements OnInit, AfterViewInit {
-
+// vv
 
   constructor(private storage: LocalStorageService) { }
   @ViewChildren(CellComponent) viewChildren !: QueryList<CellComponent>;
