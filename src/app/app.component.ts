@@ -359,7 +359,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                 console.log('Cell ' + this.getCoords(p) + 'set to ' + this.gridContents[p].values[0]);
               }
               this.hasChanged = true;
-              // xxx
+              // gggg
             }
 
           }
