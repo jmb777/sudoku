@@ -6,7 +6,7 @@ import { Killer } from './classes/killer';
 import { LocalStorageService } from 'src/services/storage.service';
 import { CellComponent } from './cell/cell.component';
 
-// comment changed on laptop
+// comment changed on pc
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
