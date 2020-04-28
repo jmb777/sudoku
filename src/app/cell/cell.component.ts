@@ -44,7 +44,6 @@ export class CellComponent implements OnInit, OnChanges {
       bottomBorder: this.bottomBorder,
       leftBorder: this.leftBorder,
       rightBorder: this.rightBorder
-
     };
 
     this.selectionClasses = {
@@ -96,7 +95,7 @@ export class CellComponent implements OnInit, OnChanges {
     killerBorderRight: this.cellOption.killerBorderRight,
     killerBorderLeft: this.cellOption.killerBorderLeft,
     killerBorderTop: this.cellOption.killerBorderTop,
-    killerBorderBottom: this.cellOption.killerBorderBottom,
+    killerBorderBottom: this.cellOption.killerBorderBottom
   }
   
   }

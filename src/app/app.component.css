@@ -1,0 +1,16 @@
+.gridCell{
+    width: 75px;
+    height: 75px;
+    /* position: relative; */
+}
+
+.colTitle{
+    width: 75px;
+    text-align: center;
+    line-height: 75px;
+}
+.rowTitle{
+    width: 30px;
+    height: 75px ;
+    line-height: 75px;
+}

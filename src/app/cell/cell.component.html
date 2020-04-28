@@ -5,7 +5,8 @@
     </div>
     <input class="inputBox" [value] = "cellOption.uniqueValue" [disabled] = "killerInput" #box (blur)="setValue(box.value)">
 
-    <div >
+    <div style="font-size:10px"  >
+      <!-- &nbsp; -->
       {{showOptionValues()}}
     </div>
   </div>

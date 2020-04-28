@@ -1,13 +1,29 @@
 <div fxLayout="row">
   <div>
     <div fxLayout="column">
+      <div fxLayout="row">
+        <div class="rowTitle">&nbsp;</div>
+        <div class="colTitle">1</div>
+        <div class="colTitle">2</div>
+        <div class="colTitle">3</div>
+        <div class="colTitle">4</div>
+        <div class="colTitle">5</div>
+        <div class="colTitle">6</div>
+        <div class="colTitle">7</div>
+        <div class="colTitle">8</div>
+        <div class="colTitle">9</div>
 
-      <div *ngFor="let row of rows">
+      </div>
+
+      <div *ngFor="let row of rows; let r = index">
         <div fxLayout="row">
-
+          <div class="rowTitle">{{getRowLetter(r)}}</div>
           <div *ngFor="let content of gridContents |  slice: 0 + row * 9 : 9 + row * 9; let i = index ">
-            <app-cell (cellSelected)="cellSelected($event)" (newValue)="setNewValue($event)"
-              [cellOption]="gridContents[i + row * 9 ]" [killerInput]="isKillerInput"></app-cell>
+            <div class="gridCell">
+              <app-cell (cellSelected)="cellSelected($event)" (newValue)="setNewValue($event)"
+                [cellOption]="gridContents[i + row * 9 ]" [killerInput]="isKillerInput"></app-cell>
+            </div>
+
           </div>
 
 
@@ -32,11 +48,11 @@
   <div>
     <mat-checkbox [(ngModel)]="showSteps" color="primary">Checkbox label</mat-checkbox>
   </div>
-  <div [innerHTML] = "message"></div>
+  <div [innerHTML]="message"></div>
 
 </div>
 
-
+<br>
 
 <div>
   <!-- <input #t (blur)="test(t.value)"> -->
@@ -57,7 +73,7 @@
 <!-- <div>
   {{gridContents | json}}
 </div> -->
-<div>
+<!-- <div>
   Killer: <br>
   {{killerPuzzle | json}}
-</div>
+</div> -->
