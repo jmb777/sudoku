@@ -11,6 +11,7 @@ export class CellComponent implements OnInit, OnChanges {
   @Input() cellOption: CellOption;
   @Input() killerInput: boolean;
   @Input() killerBorders: {};
+  @Input() puzzleType: string;
   @Output() newValue: EventEmitter<{ key, value }> = new EventEmitter();
   topBorder: boolean;
   bottomBorder: boolean;

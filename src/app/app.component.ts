@@ -41,6 +41,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   removeValuesFunction = { step: true, isSaved: false, values: [], targetCells: [] };
   showSteps = true;
   message = '';
+  puzzleType = 'killer';
   ngOnInit(): void {
     // this.gridContents.push(new CellOption([1, 8, 9], 0));
     // this.gridContents.push(new CellOption([2, 3, 6, 9], 1));
@@ -78,6 +79,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   reset() {
     this.gridContents = [];
+    this.isKillerInput = false;
+    this.puzzleType = 'sudoku';
     // this.gridContents[0] = new CellOption([4], 0);
     for (let index = 0; index < 81; index++) {
       this.gridContents.push(new CellOption(undefined, index));
@@ -121,7 +124,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     const next = e.key + 1;
     // setTimeout(() => {this.viewChildren.toArray()[next].inputElement.nativeElement.focus();},0);
   }
-  test() {
+  save() {
     // this.killer.test(this.killerPuzzle);
     const dialogRef = this.dialog.open(SaveGridComponent);
     dialogRef.afterClosed().subscribe(result => {
@@ -176,6 +179,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     return indices;
   }
 
+  getCellNumber(row: number, col: number): number {
+    return row * 9 + col - 1;
+  }
+
 
   findSameCells(cellNumber: number, cellArray: CellOption[], arrayType?: string) {
 
@@ -225,9 +232,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
           }
-          this.message = 'Finding same numbers in range '
-            + this.getCoords(cellArray[0].cellNumber)
-            + ' to ' + this.getCoords(cellArray[cellArray.length - 1].cellNumber) + '. Numbers found: ' + arrayToMatch;
+          // this.message = 'Finding same numbers in range '
+          //   + this.getCoords(cellArray[0].cellNumber)
+          //   + ' to ' + this.getCoords(cellArray[cellArray.length - 1].cellNumber) + '. Numbers found: ' + arrayToMatch;
           this.hasChanged = this.removeValues(arrayToMatch, cellsToCheck, 'Finding same numbers in range '
             + this.getCoords(cellArray[0].cellNumber)
             + ' to ' + this.getCoords(cellArray[cellArray.length - 1].cellNumber) + '. Numbers found: ' + arrayToMatch);
@@ -241,11 +248,23 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  compute() {
+  compute(mode: string) {
+    switch (mode) {
+      case 'all':
+
+        this.showSteps = false;
+        break;
+
+      default:
+        this.showSteps = true;
+        break;
+    }
     let cellArray: CellOption[] = [];
     this.hasChanged = true;
     this.mustStop = false;
-    while ((this.hasChanged && !this.mustStop && this.showSteps) || (this.hasChanged && !this.showSteps)) {
+    this.message = '';
+    while ((this.hasChanged && this.message === '' && this.showSteps) || (this.hasChanged && !this.showSteps)) {
+      this.message = '';
       this.hasChanged = false;
 
       for (let cellNumber = 0; cellNumber < 81; cellNumber++) {
@@ -253,15 +272,17 @@ export class AppComponent implements OnInit, AfterViewInit {
         cellArray = [];
         this.getRowIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSameCells(cellNumber, cellArray, 'row');
-        if (this.mustStop && this.showSteps) { return; }
+        if (this.hasChanged && this.showSteps) { break; }
         cellArray = [];
         this.getColIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSameCells(cellNumber, cellArray, 'column');
-        if (this.mustStop && this.showSteps) { return; }
+        if (this.hasChanged && this.showSteps) { break; }
+        // if (this.mustStop && this.showSteps) { return; }
         cellArray = [];
         this.getBoxIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSameCells(cellNumber, cellArray, 'box');
-        if (this.mustStop && this.showSteps) { return; }
+        if (this.hasChanged && this.showSteps) { break; }
+        // if (this.mustStop && this.showSteps) { return; }
 
 
       }
@@ -284,45 +305,59 @@ export class AppComponent implements OnInit, AfterViewInit {
         cellArray = [];
         this.getRowIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSingleOccurences(cellNumber, cellArray, 'row');
+        if (this.hasChanged && this.showSteps) { break; }
         cellArray = [];
         this.getColIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSingleOccurences(cellNumber, cellArray, 'column');
+        if (this.hasChanged && this.showSteps) { break; }
         cellArray = [];
         this.getBoxIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSingleOccurences(cellNumber, cellArray, 'box');
+        if (this.hasChanged && this.showSteps) { break; }
 
       }
+      if (this.hasChanged && this.showSteps) { continue; }
       for (let cellNumber = 0; cellNumber < 81; cellNumber++) {
 
         cellArray = [];
         this.getRowIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSimilarCells(cellNumber, cellArray, 'row');
+        if (this.hasChanged && this.showSteps) { break; }
         this.findLineBoxIntersect(cellArray, true);
+        if (this.hasChanged && this.showSteps) { break; }
         cellArray = [];
         this.getColIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSimilarCells(cellNumber, cellArray, 'column');
+        if (this.hasChanged && this.showSteps) { break; }
         this.findLineBoxIntersect(cellArray, true);
+        if (this.hasChanged && this.showSteps) { break; }
         cellArray = [];
         this.getBoxIndices(cellNumber).forEach(e => cellArray.push(this.gridContents[e]));
         this.findSimilarCells(cellNumber, cellArray, 'box');
+        if (this.hasChanged && this.showSteps) { break; }
 
       }
+      if (this.hasChanged && this.showSteps) { continue; }
       for (let i = 0; i < 81; i = i + 3) {
         const boxArray: CellOption[] = [];
         this.getBoxIndices(i).forEach(e => boxArray.push(this.gridContents[e]));
         this.findIntersections(boxArray);
+        if (this.hasChanged && this.showSteps) { break; }
         this.findLineBoxIntersect(boxArray, false);
+        if (this.hasChanged && this.showSteps) { break; }
         // this.findThreeValueIntersects(boxArray);
 
       }
-
-
+      if (this.hasChanged && this.showSteps) { continue; }
       // cellArray = [];
       // this.getRowIndices(20).forEach(e => cellArray.push(this.gridContents[e]));
       // this.findLineBoxIntersect(cellArray);
 
-      const killerChange: boolean = this.killer.test(this.killerPuzzle);
-      if (killerChange) { this.hasChanged = true; }
+      const killerChange = this.killer.test(this.killerPuzzle);
+      if (killerChange.hasChanged) {
+        this.hasChanged = true;
+        this.message = this.message + killerChange.message;
+      }
 
     }
 
@@ -373,15 +408,19 @@ export class AppComponent implements OnInit, AfterViewInit {
           for (const p of c.possiblePositions) {
             if (this.gridContents[p].values.length !== c.n.length) {
               this.gridContents[p].values = c.n;
-              // console.log('In findHiddenCells - Setting ' + c.n + ' to cell ' + this.gridContents[p].cellNumber);
+
+              this.hasChanged = true;
               if (this.gridContents[p].values.length === 1) {
                 this.gridContents[p].uniqueValue = this.gridContents[p].values[0];
                 console.log('Cell ' + this.getCoords(p) + 'set to ' + this.gridContents[p].values[0]);
+                this.message = this.message +
+                  'Cell ' + this.getCoords(p) + 'set to ' + this.gridContents[p].values[0] + '<br>';
+                break;
               }
-              this.hasChanged = true;
+
               // gggg
             }
-
+            if (this.hasChanged) { return; }
           }
         }
 
@@ -428,13 +467,19 @@ export class AppComponent implements OnInit, AfterViewInit {
               if (index > -1) {
                 this.gridContents[cell.cellNumber].values.splice(index, 1);
                 // console.log('In findHiddenNumbers - Removing ' + v + ' from cell ' + cell.cellNumber + 'contents ' + cell.values);
+                this.hasChanged = true;
                 if (this.gridContents[cell.cellNumber].values.length === 1) {
                   this.gridContents[cell.cellNumber].uniqueValue = this.gridContents[cell.cellNumber].values[0];
                   console.log('Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + this.gridContents[cell.cellNumber].values[0]);
+                  this.message = this.message +
+                    'Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + this.gridContents[cell.cellNumber].values[0] + '<br>';
+                  return;
                 }
-                this.hasChanged = true;
+                if (this.hasChanged) { return; }
               }
+
             });
+
           }
         }
       }
@@ -466,11 +511,15 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.gridContents[occurences[i][0].cellNumber].values = [i + 1];
           this.gridContents[occurences[i][0].cellNumber].uniqueValue = i + 1;
           console.log('xCell ' + this.getCoords(occurences[i][0].cellNumber) + ' set to ' + Number(i + 1));
+          this.message = this.message +
+            'Cell ' + this.getCoords(occurences[i][0].cellNumber) + ' set to ' + Number(i + 1) + '<br>';
           this.hasChanged = true;
+          break;
         }
 
       }
     }
+    if (this.hasChanged) { return; }
 
   }
 
@@ -707,12 +756,16 @@ export class AppComponent implements OnInit, AfterViewInit {
             if (cell.values.length === 1) {
               cell.uniqueValue = cell.values[0];
               console.log('Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + cell.values[0]);
+              this.message = this.message +
+                'Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + cell.values[0] + '<br><br><br>';
+              return;
             }
 
           }
         });
+        if (retVal) { return; }
       });
-      this.message = '';
+      // this.message = '';
       this.hasChanged = true;
 
     }
@@ -728,14 +781,17 @@ export class AppComponent implements OnInit, AfterViewInit {
             if (cell.values.length === 1) {
               cell.uniqueValue = cell.values[0];
               console.log('Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + cell.values[0]);
+              this.message = this.message +
+                'Cell ' + this.getCoords(cell.cellNumber) + ' set to ' + cell.values[0] + '<br>';
+              return true;
             }
 
           } else {
             if (message) {
               // console.log(message);
 
-              this.message = message;
-              message = '';
+              // this.message = message;
+              // message = '';
             }
             // console.log('     Removing ' + v + ' from cell ' + this.getCoords(cell.cellNumber));
             // this.message = this.message + '<br> &nbsp &nbsp    Removing ' + v + ' from cell ' + this.getCoords(cell.cellNumber);
@@ -767,7 +823,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   setKillerCells() {
     this.isKillerInput = true;
     this.killerPuzzle = [];
-    this.reset();
+    this.gridContents = [];
+    this.puzzleType = 'killer';
+    // this.gridContents[0] = new CellOption([4], 0);
+    for (let index = 0; index < 81; index++) {
+      this.gridContents.push(new CellOption(undefined, index));
+
+    }
   }
   cellSelected(cell: CellOption) {
     if (this.isKillerInput) {
@@ -821,6 +883,26 @@ export class AppComponent implements OnInit, AfterViewInit {
       let _bottom = true;
       let _right = true;
       let _left = true;
+
+      // if (this.getCellNumber(_row, _col) > 8) {
+      //   this.killerCells.forEach(cell => {
+      //     if (cell.cellNumber === this.getCellNumber(_row - 1, _col)) { _top = false; }
+      //   });
+      // }
+      // if (this.getCellNumber(_row, _col) < 72) {
+      //   this.killerCells.forEach(cell => {
+      //     if (cell.cellNumber === this.getCellNumber(_row + 1, _col)) { _bottom = false; }
+      //   });
+      // }
+
+      // if(_col > 0 && _col < 8) {
+      //   this.killerCells.forEach(cell => {
+      //     if (cell.cellNumber === this.getCellNumber(_row , _col - 1)) { _left = false; }
+      //   });
+      //   this.killerCells.forEach(cell => {
+      //     if (cell.cellNumber === this.getCellNumber(_row , _col + 1)) { _right = false; }
+      //   });
+      // }
 
       this.killerCells.forEach(cell => {
         if (Math.floor(cell.cellNumber / 9) === _row && cell.cellNumber % 9 + 1 === _col) { _left = false; }
@@ -912,7 +994,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     const col = n % 9 + 1;
     return this.letters[row] + col;
   }
-  getRowLetter(n: number){
+  getRowLetter(n: number) {
     return this.letters[n];
   }
 }

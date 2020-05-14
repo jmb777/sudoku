@@ -1,16 +1,92 @@
+[class*="col-"]{
+    
+    display: flex;
+    flex-direction: column;
+    padding-left: 2vw;
+    flex: 1;
+    /* width: 100%; */
+}
+.columnLayout{
+    display: flex;
+    flex-direction: column;
+}
+
+.row::after {
+    /* content: "";
+    clear: both;
+    display: block; */
+  }
+ 
+
 .gridCell{
-    width: 75px;
-    height: 75px;
+    width: 10vw;
+    height: 10vw;
     /* position: relative; */
 }
 
 .colTitle{
-    width: 75px;
+    width: 10vw;
     text-align: center;
-    line-height: 75px;
+    line-height: 30px;
 }
 .rowTitle{
     width: 30px;
-    height: 75px ;
-    line-height: 75px;
+    height: 30px ;
+    line-height: 30px;
+}
+.inputBox{
+    width: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+@media only screen and (orientation: landscape) {
+    /* col-grid{
+        width: 70%;
+    }
+  
+    col-right{
+        width:100%
+    } */
+    .colTitle{
+        width: 10vh;
+        text-align: center;
+        line-height: 30px;
+    }
+    .gridCell{
+        width: 10vh;
+        height: 10vh;
+        /* position: relative; */
+    }
+    .row{
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        width: 100%;
+        max-width: 1100px;
+    }
+
+}
+
+.horizontalSpread {
+    display: flex;
+    justify-content: space-evenly;
+}
+@media only screen and (min-width: 768px) {
+    .gridCell{
+        width: 75px;
+        height: 75px;
+        box-sizing: border-box;
+        /* position: relative; */
+    }
+    
+    .colTitle{
+        width: 75px;
+        text-align: center;
+        line-height: 75px;
+    }
+    .rowTitle{
+        width: 30px;
+        height: 30px ;
+        line-height: 30px;
+    }
 }

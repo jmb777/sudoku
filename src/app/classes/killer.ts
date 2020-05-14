@@ -1,4 +1,5 @@
 import { CellOption } from './cellOption';
+
 export class Killer {
 
     possibleNumbers: number[] = [];
@@ -12,6 +13,8 @@ export class Killer {
     writeToGrid = false;
     hasChanged = false;
     backGroundColours = ['#00FFFF', '#00FF00', '#FFFF00', '#808080'];
+    message = '';
+
 
     constructor() {
 
@@ -26,10 +29,11 @@ export class Killer {
 
         }
     }
-    test(killerPuzzle: CellOption[][]): boolean {
+    test(killerPuzzle: CellOption[][]): { hasChanged: boolean, message: string } {
         this.hasChanged = false;
+        this.message = '';
         this.findInsAndOuts(killerPuzzle, this.getRowIndices(0, 2));
-        
+
         for (let i = 0; i < 9; i++) {
             this.findInsAndOuts(killerPuzzle, this.getBoxIndices(i));
         }
@@ -53,7 +57,7 @@ export class Killer {
             this.checkCombinations1(block, block[0].killerNumber);
         }
 
-        return this.hasChanged;
+        return { hasChanged: this.hasChanged, message: this.message };
 
     }
 
@@ -116,7 +120,7 @@ export class Killer {
 
         let killerBlocks: Block[] = [];
         // console.log('Finding ins and outs from ' + this.getCoords(blockIndices[0])
-            // + ' to ' + this.getCoords(blockIndices[blockIndices.length - 1]));
+        // + ' to ' + this.getCoords(blockIndices[blockIndices.length - 1]));
         killerPuzzle.forEach(killerCells => {
             const killerBlock = new Block(killerCells[0].killerNumber);
             let inBlock = 0;
@@ -140,8 +144,8 @@ export class Killer {
 
         if (transgressingBlocks.length === 1) {
             this.checkCombinations1(transgressingBlocks[0].cellsInBlock, 45 * blockIndices.length / 9 - killerTotalIn);
-            this.checkCombinations1(transgressingBlocks[0].cellsOutBlock, 
-                transgressingBlocks[0].killerSum - ( 45 * blockIndices.length / 9 - killerTotalIn));
+            this.checkCombinations1(transgressingBlocks[0].cellsOutBlock,
+                transgressingBlocks[0].killerSum - (45 * blockIndices.length / 9 - killerTotalIn));
         }
         let killerTotalOut = 0;
         let cellsToCheck: CellOption[] = [];
@@ -153,7 +157,9 @@ export class Killer {
                     cellsToCheck.push(cell);
                 });
             });
-            if (cellsToCheck.length < 6 && cellsToCheck.length > 0) { this.checkCombinations1(cellsToCheck, 45 * blockIndices.length / 9 - killerTotalIn); }
+            if (cellsToCheck.length < 6 && cellsToCheck.length > 0) {
+                this.checkCombinations1(cellsToCheck, 45 * blockIndices.length / 9 - killerTotalIn);
+            }
             // allInCells.forEach(cells => {
             //     cells.cellsInBlock.forEach(cell => {
             //         if (cellsToCheck.includes(cell)) { cellsToCheck.splice(cellsToCheck.indexOf(cell), 1); }
@@ -238,66 +244,66 @@ export class Killer {
             }
         }
     }
-    checkCombinations(block: CellOption[]) {
-        let runningSum = block[0].killerNumber;
-        let isPossible = false;
-        let selected: number[] = [];
-        function isPossibleCombination(innerBlock: CellOption[], used: number[]) {
-            if (innerBlock.length === 1) {
+    // checkCombinations(block: CellOption[]) {
+    //     let runningSum = block[0].killerNumber;
+    //     let isPossible = false;
+    //     let selected: number[] = [];
+    //     function isPossibleCombination(innerBlock: CellOption[], used: number[]) {
+    //         if (innerBlock.length === 1) {
 
-                if (innerBlock[0].values.includes(runningSum)) {
-                    if (!used.includes(runningSum)) {
-                        isPossible = true;
+    //             if (innerBlock[0].values.includes(runningSum)) {
+    //                 if (!used.includes(runningSum)) {
+    //                     isPossible = true;
 
-                    }
-                }
-            } else {
-                for (const cell of block) {
-                    for (let i = cell.values.length - 1; i >= 0; i--) {
-                        const v = cell.values[i];
-                        if (!used.includes(v)) {
-                            runningSum = runningSum - v;
-                            const cellPosition = block.indexOf(cell);
-                            innerBlock.splice(cellPosition, 1);
-                            used.push(v);
-                            isPossibleCombination(innerBlock, used);
-                            innerBlock.splice(cellPosition, 0, cell);
-                            runningSum = runningSum + v;
-                            used.pop();
-                        }
+    //                 }
+    //             }
+    //         } else {
+    //             for (const cell of block) {
+    //                 for (let i = cell.values.length - 1; i >= 0; i--) {
+    //                     const v = cell.values[i];
+    //                     if (!used.includes(v)) {
+    //                         runningSum = runningSum - v;
+    //                         const cellPosition = block.indexOf(cell);
+    //                         innerBlock.splice(cellPosition, 1);
+    //                         used.push(v);
+    //                         isPossibleCombination(innerBlock, used);
+    //                         innerBlock.splice(cellPosition, 0, cell);
+    //                         runningSum = runningSum + v;
+    //                         used.pop();
+    //                     }
 
-                    }
-                }
-            }
-
-
-        }
-        for (const cell of block) {
-            runningSum = block[0].killerNumber;
-
-            for (let i = cell.values.length - 1; i >= 0; i--) {
-                isPossible = false;
-                const cellPosition = block.indexOf(cell);
-                const v = cell.values[i];
-                selected = [v];
-                runningSum = runningSum - v;
-                block.splice(cellPosition, 1);
-                isPossibleCombination(block, selected);
-                if (!isPossible) {
-                    cell.values.splice(cell.values.indexOf(v), 1);
-                }
-                runningSum = runningSum + v;
-                block.splice(cellPosition, 0, cell);
-                isPossible = false;
-            }
+    //                 }
+    //             }
+    //         }
 
 
-        }
+    //     }
+    //     for (const cell of block) {
+    //         runningSum = block[0].killerNumber;
+
+    //         for (let i = cell.values.length - 1; i >= 0; i--) {
+    //             isPossible = false;
+    //             const cellPosition = block.indexOf(cell);
+    //             const v = cell.values[i];
+    //             selected = [v];
+    //             runningSum = runningSum - v;
+    //             block.splice(cellPosition, 1);
+    //             isPossibleCombination(block, selected);
+    //             if (!isPossible) {
+    //                 cell.values.splice(cell.values.indexOf(v), 1);
+    //             }
+    //             runningSum = runningSum + v;
+    //             block.splice(cellPosition, 0, cell);
+    //             isPossible = false;
+    //         }
 
 
-    }
+    //     }
+
+
+    // }
     getCombinations(total: number, n: number): number[][] {
-        if (n === 1 ) {
+        if (n === 1) {
             return [[total]];
         }
         const o = this.allPossibleCombinations.filter(c => c.total === Number(total) && c.elements === Number(n))[0];
@@ -353,6 +359,7 @@ export class Killer {
         }
     }
     setGridValues(block: CellOption[], requiredNumbers: number[][]) {
+        
         for (let i = block.length - 1; i >= 0; i--) {
             for (let j = block[i].values.length - 1; j >= 0; j--) {
                 const v = block[i].values[j];
@@ -361,10 +368,17 @@ export class Killer {
                     block[i].values.splice(block[i].values.indexOf(v), 1);
                     // console.log('Removing ' + v + ' from cell ' + this.getCoords(block[i].cellNumber));
                     // this.mustStop = true;
-                    if (block[i].values.length === 1) { block[i].uniqueValue = block[i].values[0]; }
                     this.hasChanged = true;
+                    if (block[i].values.length === 1) {
+                        block[i].uniqueValue = block[i].values[0];
+                        this.message = 'Cell ' + this.getCoords(block[i].cellNumber) + ' set to ' + block[i].uniqueValue + ' (Killer algorithm)';
+                        break;
+                    }
+
+                    
                 }
             }
+            if (this.hasChanged) {break;}
 
         }
         if (this.mustStop) { this.writeToGrid = !this.writeToGrid; }
@@ -378,7 +392,7 @@ export class Killer {
         for (const cell of gridContents) {
             cell.killerBackground = '#FFFFFF';
         }
-       
+
 
         for (let block of killerPuzzle) {
             const usedColours = [];
@@ -408,7 +422,7 @@ export class Killer {
                 if (!usedColours.includes(colour)) {
                     for (const cell of block) {
                         cell.killerBackground = colour;
-                       
+
                     }
                     break;
                 }

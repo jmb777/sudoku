@@ -1,69 +1,108 @@
-<div fxLayout="row">
-  <div>
-    <div fxLayout="column">
-      <div fxLayout="row">
-        <div class="rowTitle">&nbsp;</div>
-        <div class="colTitle">1</div>
-        <div class="colTitle">2</div>
-        <div class="colTitle">3</div>
-        <div class="colTitle">4</div>
-        <div class="colTitle">5</div>
-        <div class="colTitle">6</div>
-        <div class="colTitle">7</div>
-        <div class="colTitle">8</div>
-        <div class="colTitle">9</div>
-
-      </div>
-
-      <div *ngFor="let row of rows; let r = index">
-        <div fxLayout="row">
-          <div class="rowTitle">{{getRowLetter(r)}}</div>
-          <div *ngFor="let content of gridContents |  slice: 0 + row * 9 : 9 + row * 9; let i = index ">
-            <div class="gridCell">
-              <app-cell (cellSelected)="cellSelected($event)" (newValue)="setNewValue($event)"
-                [cellOption]="gridContents[i + row * 9 ]" [killerInput]="isKillerInput"></app-cell>
-            </div>
+<div class="row">
+  <div class="col-grid">
+    <div fxLayout="row">
+      <div>
+        <div fxLayout="column">
+          <div fxLayout="row">
+            <div class="rowTitle">&nbsp;</div>
+            <div class="colTitle">1</div>
+            <div class="colTitle">2</div>
+            <div class="colTitle">3</div>
+            <div class="colTitle">4</div>
+            <div class="colTitle">5</div>
+            <div class="colTitle">6</div>
+            <div class="colTitle">7</div>
+            <div class="colTitle">8</div>
+            <div class="colTitle">9</div>
 
           </div>
 
+          <div *ngFor="let row of rows; let r = index">
+            <div fxLayout="row">
+              <div class="rowTitle">{{getRowLetter(r)}}</div>
+              <div *ngFor="let content of gridContents |  slice: 0 + row * 9 : 9 + row * 9; let i = index ">
+                <div class="gridCell">
+                  <app-cell [puzzleType]="puzzleType" (cellSelected)="cellSelected($event)"
+                    (newValue)="setNewValue($event)" [cellOption]="gridContents[i + row * 9 ]"
+                    [killerInput]="isKillerInput"></app-cell>
+                </div>
 
+              </div>
+
+
+
+            </div>
+          </div>
 
         </div>
       </div>
 
+
     </div>
   </div>
-  <div *ngIf="isKillerInput">
-    Set killer puzzle
+  <div class="col-right">
+    <div class="colLayout">
+      <h4>
+        Solve
+      </h4>
+      <div class="horizontalSpread">
+        <button (click)="compute('all')">Solve complete puzzle</button>
+        <button (click)="compute('steps')">Show next step</button>
+      </div>
 
+    </div>
+    <div [innerHTML]="message"></div>
     <div>
-      Number<input [formControl]="input1">
+      <h4>
+        Set puzzle
+      </h4>
+      <div class="horizontalSpread">
+        <button (click)="reset()">Set sudoku</button>
+        <button (click)="setKillerCells()">Set killer</button>
+
+      </div>
+      <div>
+
+      </div>
+
+    </div>
+    <div *ngIf="isKillerInput">
+      <br>
+      <div>
+        Select cells and enter number
+      </div>
+
+      <br>
+
+      <div>
+        Number<input class="inputBox" [formControl]="input1">
+        <button [disabled]="!input1.value " (click)="killerNumberInput()">Enter</button>
+      </div>
+
+
+
+
+    </div>
+    <!-- <div>
+      <mat-checkbox [(ngModel)]="showSteps" color="primary">Checkbox label</mat-checkbox>
+    </div> -->
+    <div class="colLayout">
+      <h4>
+        Saved grid
+      </h4>
+      <div class="horizontalSpread">
+        <button (click)="save()">Save this grid</button>
+        <button (click)="getSavedGrid()">Reload saved grid</button>
+      </div>
+
+
     </div>
 
-
-
-    <button [disabled]="!input1.value " (click)="killerNumberInput()">Enter</button>
-    <button>Reset</button>
   </div>
-  <div>
-    <mat-checkbox [(ngModel)]="showSteps" color="primary">Checkbox label</mat-checkbox>
-  </div>
-  <div [innerHTML]="message"></div>
-
 </div>
 
-<br>
 
-<div>
-  <!-- <input #t (blur)="test(t.value)"> -->
-  <button (click)="compute()">Solve</button>
-  <button (click)="test()">test</button>
-  <button (click)="reset()">Reset</button>
-  <button (click)="setKillerCells()">Set killer</button>
-  <button (click)="writeFile()">Save</button>
-  <button (click)="getSavedGrid()">Reload</button>
 
-</div>
 <!-- <div fxLayout="row">
   <div *ngFor="let content of gridContents |  slice: 9 : 18; let i = index ">
     <app-cell [cellNumber]="i + 9" [cellOption]="gridContents[i]"></app-cell>

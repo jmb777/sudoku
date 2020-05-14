@@ -1,13 +1,19 @@
-<div [style.background-color]="cellOption.killerBackground" class="cell"  [ngClass]="borderClasses">
-  <div class="cellContent" [ngClass] = "setKillerBorders()" (click) = "selectCell()">
-    <div  >
+<div [style.background-color]="cellOption.killerBackground" class="cell"  [ngClass]="borderClasses" >
+  
+  <div class="cellContent" [ngClass] = "setKillerBorders()" (click) = "selectCell()"  >
+    <div  class="topContent">
       &nbsp;{{cellOption.killerNumber}}
     </div>
-    <input class="inputBox" [value] = "cellOption.uniqueValue" [disabled] = "killerInput" #box (blur)="setValue(box.value)">
-
-    <div style="font-size:10px"  >
-      <!-- &nbsp; -->
+    
+     
+      <input class="inputBox" [value] = "cellOption.uniqueValue" [disabled] = "puzzleType === 'killer'" #box (blur)="setValue(box.value)">
+      
+    
+      <div  class="bottomContent"  >
+      &nbsp;
       {{showOptionValues()}}
     </div>
+    
+    
   </div>
 </div>
