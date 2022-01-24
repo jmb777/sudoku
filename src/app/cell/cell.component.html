@@ -6,7 +6,7 @@
     </div>
     
      
-      <input class="inputBox" [value] = "cellOption.uniqueValue" [disabled] = "puzzleType === 'killer'" #box (blur)="setValue(box.value)">
+      <input type="number" class="inputBox" [value] = "cellOption.uniqueValue" [disabled] = "puzzleType === 'killer'" #box (blur)="setValue(box.value)">
       
     
       <div  class="bottomContent"  >
