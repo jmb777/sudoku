@@ -7,6 +7,8 @@ import { LocalStorageService } from 'src/services/storage.service';
 import { CellComponent } from './cell/cell.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SaveGridComponent } from './save-grid/save-grid.component';
+import { createWorker } from 'tesseract.js';
+import * as Tesseract from 'tesseract.js';
 
 // comment changed on pc change branch
 @Component({
@@ -42,6 +44,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   showSteps = true;
   message = '';
   puzzleType = 'killer';
+  ocrResult:any;
+  imagePath = '../assets/images/IMG_3351.png';
   ngOnInit(): void {
     // this.gridContents.push(new CellOption([1, 8, 9], 0));
     // this.gridContents.push(new CellOption([2, 3, 6, 9], 1));
@@ -77,6 +81,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
   }
+  async doOCR() {
+    this.ocrResult="Recognising...";
+    const worker = createWorker({
+      logger: m => console.log(m),
+    });
+    
+    await worker.load();
+    await worker.loadLanguage('eng');
+    
+    await worker.initialize('eng');
+    
+    const { data: { words } } = await worker.recognize(this.imagePath);
+    this.ocrResult = words;
+    // console.log(text);
+    await worker.terminate();
+  }
+
   reset() {
     this.gridContents = [];
     this.isKillerInput = false;

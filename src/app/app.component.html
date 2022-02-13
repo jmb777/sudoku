@@ -98,6 +98,13 @@
 
     </div>
 
+    <div>
+      <button (click)="doOCR()">OCR</button>
+    </div>
+    <img [src]= "imagePath" width="50%" />
+    <p>
+      {{ ocrResult }}
+    </p>
   </div>
 </div>
 
